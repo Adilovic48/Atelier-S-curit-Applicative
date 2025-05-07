@@ -1,5 +1,4 @@
 import React, {useState} from "react";
-import {Toast, ToastTitle, useToast} from "@/components/ui/toast";
 import {HStack} from "@/components/ui/hstack";
 import {VStack} from "@/components/ui/vstack";
 import {Heading} from "@/components/ui/heading";
@@ -25,21 +24,7 @@ import {AlertTriangle} from "lucide-react-native";
 import {GoogleIcon} from "@/assets/auth/icons/google";
 import {Pressable} from "@/components/ui/pressable";
 import {useRouter} from "expo-router";
-
-const USERS = [
-  {
-    email: "gabrial@gmail.com",
-    password: "Gabrial@123",
-  },
-  {
-    email: "tom@gmail.com",
-    password: "Tom@123",
-  },
-  {
-    email: "thomas@gmail.com",
-    password: "Thomas@1234",
-  },
-];
+import * as SecureStore from "expo-secure-store";
 
 const loginSchema = z.object({
   email: z.string().min(1, "Email is required").email(),
@@ -58,33 +43,36 @@ export default function SignIn() {
   } = useForm<LoginSchemaType>({
     resolver: zodResolver(loginSchema),
   });
-  const toast = useToast();
   const [validated, setValidated] = useState({
     emailValid: true,
     passwordValid: true,
   });
+  const [loading, setLoading] = useState(false);
 
   const onSubmit = async (data: LoginSchemaType) => {
-    const user = USERS.find((element) => element.email === data.email);
-    if (user) {
-      if (user.password !== data.password)
-        setValidated({emailValid: true, passwordValid: false});
-      else {
-        setValidated({emailValid: true, passwordValid: true});
-        toast.show({
-          placement: "bottom right",
-          render: ({id}) => {
-            return (
-              <Toast nativeID={id} variant="solid" action="success">
-                <ToastTitle>Logged in successfully!</ToastTitle>
-              </Toast>
-            );
-          },
-        });
-        reset();
-      }
-    } else {
-      setValidated({emailValid: false, passwordValid: true});
+    setValidated({emailValid: true, passwordValid: true});
+    setLoading(true)
+    const { email, password } = data;
+    const url = 'https://fcs.webservice.odeiapp.fr/auth/login';
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: email,
+          password: password,
+        }),
+      });
+      const newUser = await response.json();
+      console.log(newUser);
+      reset();
+      router.replace("myapp://dashboard/home");
+    } catch (e) {
+      setValidated({ emailValid: false, passwordValid: false });
+    } finally {
+      setLoading(false);
     }
   }
   const [showPassword, setShowPassword] = useState(false);
@@ -100,7 +88,7 @@ export default function SignIn() {
   };
   const router = useRouter();
   return (
-    <VStack className="max-w-[440px] w-full" space="md">
+    <VStack className="w-full" space="md">
       <VStack className="md:items-center" space="md">
         <Pressable
           onPress={() => {
@@ -241,7 +229,7 @@ export default function SignIn() {
         <VStack className="w-full my-7 " space="lg">
           <Button className="w-full" onPress={handleSubmit(onSubmit)}>
             <ButtonText className="font-medium">
-              Log in
+              {loading ? 'loading...' : 'Log in'}
             </ButtonText>
           </Button>
           <Button
