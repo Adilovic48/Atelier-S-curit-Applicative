@@ -41,6 +41,7 @@ Bienvenue dans le projet **Fake Cloud Society App**, une application mobile dév
 ![Token utilisateur envoyé](./screenshots/utilisateur_token_envoye.png)
 ![Erreur lors du build](./screenshots/Erreur_Build_Expo.png)
 ![Envoi du projet en retard a cause du build](./screenshots/Retard_cause_build.png)
+![Certificat de sécurirté](./screenshots/sec_cer.png)
 
 
 
