@@ -1,48 +1,132 @@
- HEAD
-# Atelier-S-curit-Applicative
-Projet scolaire
-=======
-# Welcome to Fake Cloud Society App
 
-This is an [Expo](https://expo.dev) app
+# 📱 Fake Cloud Society App (FCS-App)
 
-## Get started
+Bienvenue dans le projet **Fake Cloud Society App**, une application mobile développée avec **React Native**, **Expo** et **TypeScript** dans le cadre de notre projet d’école. L'application propose une expérience de connexion sécurisée, un tableau de bord dynamique, un profil utilisateur éditable, et bien plus encore.
 
-1. Start the app
+---
 
-   ```bash
-    npm run start
-   ```
+## 🚀 Fonctionnalités principales
 
-In the output, you'll find options to open the app in a
+- 🔐 **Authentification sécurisée** avec `SecureStore`
+- ✅ **Persistance de session**
+- 🧑‍💼 **Édition du profil utilisateur** (nom, prénom, pays, etc.)
+- 🌐 **Navigation protégée** par un système de `ProtectedRoute`
+- 🧾 **Connexion API** RESTful avec `fetch`
+- 🔒 **SSL Pinning** pour sécuriser les requêtes réseau
+- 🧠 **Form validation** avec `zod` et `react-hook-form`
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+---
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+## 🛠️ Technologies utilisées
 
-## Build
+- [Expo](https://expo.dev/)
+- [React Native](https://reactnative.dev/)
+- [TypeScript](https://www.typescriptlang.org/)
+- [Zod](https://zod.dev/) pour la validation de formulaire
+- [React Hook Form](https://react-hook-form.com/)
+- [Expo Secure Store](https://docs.expo.dev/versions/latest/sdk/securestore/)
+- [Lucide Icons](https://lucide.dev/)
 
-In order to build the application you will need an account in [Expo.dev](https://expo.dev/)
+---
 
-Follow [these instructions](https://docs.expo.dev/build/setup/) to build your application using EAS
+## 📷 Capture d'écran
 
-## Extract application from app bundle
+![Création d’un utilisateur](./screenshots/creation_utilisateur.png)
+![Exécution de l'utilisateur](./screenshots/execution_utilisateur.png)
+![Exécution du Login](./screenshots/login_envoi.png)
+![Mise à jour utilisateur](./screenshots/maj_utilisateur.png)
+![Mise à jour utilisateur](./screenshots/maj_utilisateur_2.png)
+![Suppression de l'utilisateur](./screenshots/suppression_utilisateur.png)
+![Retour de token](./screenshots/retour_token.png)
+![Token utilisateur envoyé](./screenshots/utilisateur_token_envoye.png)
+![Erreur lors du build](./screenshots/Erreur_Build_Expo.png)
+![Envoi du projet en retard a cause du build](./screenshots/Retard_cause_build.png)
 
-Use [bundletool](https://developer.android.com/tools/bundletool?hl=fr) command to extract apk
+
+
+
+
+---
+
+## 🧪 Installation locale
+
+1. **Cloner le dépôt :**
+
+```bash
+git clone https://github.com/Adilovic48/Atelier-S-curit-Applicative.git
+cd FCS-App
 ```
- bundletool build-apks --bundle ./my_app.aab --output ./my_app.apks --mode=universal
-```
-Then rename your .apks file to .zip
-```
-mv my_app.apks my_app.zip
-```
-And unzip folder
-```
-unzip my_app.zip
-```
-Your application is universal.apk !
 
->>>>>>> 5a794d5 (initial commit)
+2. **Installer les dépendances :**
+
+```bash
+npm install
+```
+
+3. **Lancer le projet :**
+
+```bash
+npx expo start
+```
+
+---
+
+## 📦 Générer un APK
+
+```bash
+eas build --platform android
+```
+
+> ⚠️ Vous devez avoir un compte Expo et EAS configuré. Vous pouvez aussi lancer l'application dans un émulateur avec :
+
+```bash
+npx expo run:android
+```
+
+---
+
+## 🔐 SSL Pinning
+
+Nous avons utilisé `expo-network` + certificat `.cer` stocké dans `android/app/src/main/res/raw/odeiapp.cer` pour vérifier l’authenticité des requêtes.
+
+---
+
+## 🧾 Routes protégées
+
+Un composant `ProtectedRoute.tsx` protège toutes les pages sensibles de l’application. Si l’utilisateur n’est pas authentifié, il est redirigé vers `/auth/signin`.
+
+---
+
+---
+
+## 👨‍💻 Auteur
+
+- **Nom** : Samatou Adil
+- **École** : EPSI
+- **Classe** : SN2
+- **Projet** : Atelier Sécurité Applicative
+
+---
+
+## 📁 Arborescence
+
+```
+FCS-App/
+├── app/
+│   ├── auth/
+│   ├── dashboard/
+│   └── ...
+├── assets/
+├── constants/
+├── components/
+├── android/
+├── .gitignore
+├── README.md
+└── eas.json
+```
+
+---
+
+## 📄 Licence
+
+Ce projet est à but pédagogique dans le cadre de l’école EPSI.
