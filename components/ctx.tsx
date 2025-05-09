@@ -3,6 +3,9 @@ import { useStorageState } from '@/hooks/useStorageState';
 import * as SecureStore from "expo-secure-store";
 import {ACCESS_TOKEN} from "@/constants/StorageKeys";
 import {jwtDecode} from "jwt-decode";
+import { View, ActivityIndicator } from "react-native";
+import { fetch as sslFetch } from 'react-native-ssl-pinning';
+
 
 const AuthContext = createContext<{
   signIn: () => Promise<void>;
@@ -15,6 +18,7 @@ const AuthContext = createContext<{
   session: null,
   isLoading: false,
 });
+
 
 export function useSession() {
   const value = useContext(AuthContext);
@@ -39,13 +43,19 @@ export function SessionProvider({ children }: PropsWithChildren) {
             const decoded = jwtDecode(token);
             const url = 'https://fcs.webservice.odeiapp.fr/users?email=' + (decoded as any).username;
             try {
-              const response = await fetch(url, {
+              const response = await sslFetch('https://fcs.webservice.odeiapp.fr/auth/login', {
                 method: 'GET',
+                timeoutInterval: 10000,
                 headers: {
                   'Content-Type': 'application/json',
-                  'Authorization': `Bearer ${token}`,
-                }
+                  Accept: 'application/json',
+                  Authorization: 'Bearer ${token}',
+                },
+                sslPinning: {
+                  certs: ['odeiapp'],
+                },
               });
+
               const user = (await response.json())[0];
               setSession(user);
             } catch (e) {

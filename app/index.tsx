@@ -2,26 +2,48 @@ import { VStack } from "@/components/ui/vstack";
 import {Button, ButtonText} from "@/components/ui/button";
 import {Text} from "@/components/ui/text";
 import {Heading} from "@/components/ui/heading";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {useRouter} from "expo-router";
 import {SafeAreaView} from "@/components/ui/safe-area-view";
 import {ScrollView} from "@/components/ui/scroll-view";
 import {HStack} from "@/components/ui/hstack";
 import {Image} from "@/components/ui/image";
+import SignIn from "./auth/signin";
+import { useSession } from "@/components/ctx";
+import { Platform } from "react-native";
+import { ACCESS_TOKEN } from "@/constants/StorageKeys";
+import * as SecureStore from "expo-secure-store";
+import { jwtDecode } from "jwt-decode";
+import { ActivityIndicator, View } from "react-native";
 
 export default function Index() {
   const router = useRouter();
+  const { signIn } = useSession();
+  const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+       signIn()
+         .then(() => {
+           router.replace("/dashboard/home");
+         })
+         .catch(() => {
+           setLoading(false);
+         });
+     }, []);
+
+     if (loading) {
+       return (
+         <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+           <ActivityIndicator size="large" color="#007AFF" />
+         </View>
+       );
+     }
+
   return (
     <SafeAreaView className="w-full h-full">
-      <ScrollView
-        className="w-full h-full"
-        contentContainerStyle={{flexGrow: 1}}
-      >
+      <ScrollView className="w-full h-full"contentContainerStyle={{flexGrow: 1}}>
         <HStack className="w-full h-full flex-grow justify-center">
-          <VStack
-            className="relative hidden md:flex h-full w-full flex-1 items-center  justify-center"
-            space="md"
-          >
+          <VStack className="relative hidden md:flex h-full w-full flex-1 items-center  justify-center" space="md">
             <Image
               height={100}
               width={100}
@@ -43,19 +65,10 @@ export default function Index() {
                 <Text className="text-center">Welcome to our awesome app</Text>
               </VStack>
               <VStack className="w-full" space="lg">
-                <Button
-                  className="w-full"
-                  onPress={() => {
-                    router.push("/auth/signin");
-                  }}
-                >
+                <Button className="w-full" onPress={() =>  router.push("/auth/signin")}>
                   <ButtonText className="font-medium">Log in</ButtonText>
                 </Button>
-                <Button
-                  onPress={() => {
-                    router.push("/auth/signup");
-                  }}
-                >
+                <Button onPress={() => router.push("/auth/signup")}>
                   <ButtonText className="font-medium">Sign Up</ButtonText>
                 </Button>
               </VStack>

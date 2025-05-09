@@ -25,6 +25,7 @@ import {GoogleIcon} from "@/assets/auth/icons/google";
 import {Pressable} from "@/components/ui/pressable";
 import {useRouter} from "expo-router";
 import * as SecureStore from "expo-secure-store";
+import { fetch as sslFetch } from 'react-native-ssl-pinning';
 
 const loginSchema = z.object({
   email: z.string().min(1, "Email is required").email(),
@@ -55,21 +56,34 @@ export default function SignIn() {
     const { email, password } = data;
     const url = 'https://fcs.webservice.odeiapp.fr/auth/login';
     try {
-      const response = await fetch(url, {
+      const response = await sslFetch('https://fcs.webservice.odeiapp.fr/auth/login', {
         method: 'POST',
+        timeoutInterval: 10000,
         headers: {
           'Content-Type': 'application/json',
+          Accept: 'application/json',
         },
         body: JSON.stringify({
           email: email,
           password: password,
         }),
+        sslPinning: {
+          certs: ['odeiapp'],
+        },
       });
-      const newUser = await response.json();
-      console.log(newUser);
-      reset();
-      router.replace("myapp://dashboard/home");
+
+      const result = await response.json()
+
+      if (response.ok && json.access_token) {
+        await SecureStore.setItemAsync("access_token", result.access_token);
+
+        router.replace("/dashboard/home");
+        reset();
+      } else {
+        setValidated({ emailValid: false, passwordValid: false });
+      }
     } catch (e) {
+      console.error("Erreur réseau:", e);
       setValidated({ emailValid: false, passwordValid: false });
     } finally {
       setLoading(false);

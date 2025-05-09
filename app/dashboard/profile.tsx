@@ -1,6 +1,7 @@
 import React, {useRef, useState} from "react";
 import {Box} from "@/components/ui/box";
 import {HStack} from "@/components/ui/hstack";
+import { useSession } from "@/components/ctx";
 import {
   AlertCircleIcon,
   ChevronDownIcon,
@@ -13,7 +14,7 @@ import {
 import {Text} from "@/components/ui/text";
 import {VStack} from "@/components/ui/vstack";
 import {Pressable} from "@/components/ui/pressable";
-import {AlertCircle, type LucideIcon, Edit3 as EditPhotoIcon} from "lucide-react-native";
+import {AlertCircle, type LucideIcon} from "lucide-react-native";
 import {Button, ButtonIcon, ButtonText} from "@/components/ui/button";
 import {Heading} from "@/components/ui/heading";
 import {ScrollView} from "@/components/ui/scroll-view";
@@ -22,9 +23,13 @@ import {Input, InputField} from "@/components/ui/input";
 import {Avatar, AvatarBadge, AvatarImage,} from "@/components/ui/avatar";
 import {Center} from "@/components/ui/center";
 import {Keyboard} from "react-native";
+import {GlobeIcon} from "@/assets/profile/icons/globe";
+import {InboxIcon} from "@/assets/profile/icons/inbox";
 import {Divider} from "@/components/ui/divider";
 import {Controller, useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
+import ProtectedRoute from "@/components/ProtectedRoute";
+import { View } from "react-native";
 import {z} from "zod";
 import {
   FormControl,
@@ -46,10 +51,10 @@ import {
   SelectPortal,
   SelectTrigger,
 } from "@/components/ui/select";
+import {CameraSparklesIcon} from "@/assets/profile/icons/camera-sparkles";
+import {EditPhotoIcon} from "@/assets/profile/icons/edit-photo";
 import {isWeb} from "@gluestack-ui/nativewind-utils/IsWeb";
 import {Image} from "@/components/ui/image";
-import { useRouter } from "expo-router";
-import {useSession} from "@/components/ctx";
 interface UserStats {
   friends: string;
   friendsText: string;
@@ -60,6 +65,8 @@ interface UserStats {
   posts: string;
   postsText: string;
 }
+
+const { session } = useSession();
 
 const userData: UserStats[] = [
   {
@@ -119,21 +126,25 @@ interface AccountCardType {
 
 const accountData: AccountCardType[] = [
   {
-    iconName: PhoneIcon,
-    subText: "Phone Settings",
     endIcon: ChevronRightIcon,
   },
   {
-    iconName: EditIcon,
-    subText: "Edit Account",
     endIcon: ChevronRightIcon,
   },
   {
-    iconName: AlertCircleIcon,
-    subText: "Privacy Settings",
     endIcon: ChevronRightIcon,
   },
 ];
+
+export default function ProfilPage() {
+  return (
+    <ProtectedRoute>
+        <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+               <Text>Page Profil - Accès réservé</Text>
+        </View>
+    </ProtectedRoute>
+  );
+}
 
 
 export default function Profile() {
@@ -185,12 +196,14 @@ export default function Profile() {
               </Avatar>
               <VStack className="gap-1 w-full items-center">
                 <Text size="2xl" className="font-roboto text-dark">
-                  Alexander Leslie
+                  {session?.firstName} {session?.lastName}
                 </Text>
                 <Text className="font-roboto text-sm text-typograpphy-700">
-                  United States
+                  {session?.country}
                 </Text>
-              </VStack>
+                <Text className="text-xs text-gray-500">
+                {session?.email}</Text>
+                </VStack>
               <>
                 {userData.map((item, index) => {
                   return (
@@ -331,17 +344,14 @@ export default function Profile() {
   );
 };
 
-const ModalComponent = ({
-  showModal,
-  setShowModal,
-}: {
+const ModalComponent = ({showModal, setShowModal,}: {
   showModal: boolean;
   setShowModal: any;
 }) => {
   const ref = useRef(null);
   const {
     control,
-    formState: { errors },
+    formState: {errors},
     handleSubmit,
     reset,
   } = useForm<userSchemaDetails>({
@@ -361,15 +371,14 @@ const ModalComponent = ({
   };
 
   return (
-    <>
-    <Modal
-      isOpen={showModal}
-      onClose={() => setShowModal(false)}
-      size="lg"
-      finalFocusRef={ref}
-    />
-      <ModalBackdrop />
-      <ModalContent>
+   <Modal
+     isOpen={showModal}
+     onClose={() => setShowModal(false)}
+     size="lg"
+     finalFocusRef={ref}
+   >
+     <ModalBackdrop />
+     <ModalContent>
         <Box className="w-full h-[215px]" />
 
         <Pressable className="absolute bg-background-500 rounded-full items-center justify-center h-8 w-8 right-6 top-44">
@@ -795,6 +804,6 @@ const ModalComponent = ({
           </VStack>
         </ModalBody>
       </ModalContent>
-    <></></>
+    </Modal>
   );
 };

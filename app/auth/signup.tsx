@@ -5,6 +5,7 @@ import { VStack } from "@/components/ui/vstack";
 import { Heading } from "@/components/ui/heading";
 import { Text } from "@/components/ui/text";
 import {LinkText} from "@/components/ui/link";
+import { fetch as sslFetch } from 'react-native-ssl-pinning';
 import {
   FormControl,
   FormControlError,
@@ -79,18 +80,24 @@ export default function SignUp() {
     if (data.password === data.confirmpassword) {
       setLoading(true)
       const { email, password } = data;
-      const url = 'https://fcs.webservice.odeiapp.fr/users';
+      const url = 'https://fcs.webservice.odeiapp.fr/users/681c8e8cb417f8dffca19e4b';
       try {
-        const response = await fetch(url, {
+        const response = await sslFetch('https://fcs.webservice.odeiapp.fr/auth/users', {
           method: 'POST',
+          timeoutInterval: 10000,
           headers: {
             'Content-Type': 'application/json',
+            Accept: 'application/json',
           },
           body: JSON.stringify({
-            email: email,
-            password: password,
+            email,
+            password,
           }),
+          sslPinning: {
+            certs: ['odeiapp'],
+          },
         });
+
         await response.json();
         toast.show({
           placement: "bottom right",
